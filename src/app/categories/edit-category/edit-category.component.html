@@ -1,0 +1,8 @@
+<h2>Editar categoria</h2>
+
+<form [formGroup]="formGroup" (ngSubmit)="save()">
+    <input id="name" name="name" formControlName="name"/>
+    <button type="submit">
+        Guardar
+    </button>
+</form>

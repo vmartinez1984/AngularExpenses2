@@ -1,0 +1,20 @@
+<h2>Subcategorias</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Subcategoria</th>
+            <th>Categoria</th>
+            <th>Cantidad</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let subcategory of subcategories">
+            <td>{{subcategory.name}}</td>
+            <td>{{subcategory.categoryName}}</td>
+            <td>{{subcategory.amount | currency}}</td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>

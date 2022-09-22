@@ -1,0 +1,27 @@
+<h2>Lista de categorias</h2>
+
+<a routerLink="/categories/create">Agregar categoria</a>
+<table>
+    <thead>
+        <tr>
+            <th>Categoria</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let category of listCategories">
+            <td>{{category.name}}</td>
+            <td>
+                <a href="categories/{{category.id}}/subcategories">Ver subcategorias</a>
+            </td>
+            <td>
+                <a href="categories/edit/{{category.id}}">Editar</a>
+            </td>
+            <td>
+                <button (click)="delete(category)" type="button">
+                    Borrar
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>

@@ -1,0 +1,24 @@
+<h2>Periodos</h2>
+
+<table width="100%" >
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Fecha de inicio</th>
+            <th>Fecha fin</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let period of listPeriods">
+            <td>{{period.name}}</td>
+            <td>{{period.dateStart}}</td>
+            <td>{{period.dateEnd}}</td>
+            <td>
+                <a routerLink="/periods/details/{{period.id}}">
+                    Detalles
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
