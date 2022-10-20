@@ -1,0 +1,10 @@
+<h2>Nuevo periodo</h2>
+
+<form [formGroup]="formGroup" (ngSubmit)="save()">
+    <input formControlName="name"/>
+    <input formControlName="dateStart" type="date" />
+    <input formControlName="dateEnd" type="date" />
+    <button>
+        Guardar
+    </button>
+</form>

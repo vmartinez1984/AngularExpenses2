@@ -8,15 +8,18 @@ import { ExpenseDto } from './expense';
   providedIn: 'root'
 })
 export class ExpensesService {
-  delete(expenseId: string): Observable<any> {
-    return this.httpClient.delete(this.url + '/'+ expenseId)
+  update(expense: ExpenseDto): Observable<any> {
+    return this.httpClient.put(this.url + expense.id, expense)
   }
-  url = environment.baseUrl + '/Api/Expenses'
+  delete(expenseId: string): Observable<any> {
+    return this.httpClient.delete(this.url + expenseId)
+  }
+  url = environment.baseUrl + '/Api/Expenses/'
 
   constructor(private httpClient: HttpClient) { }
 
   get(id: string): Observable<any> {
-    return this.httpClient.get(id);
+    return this.httpClient.get(this.url + id);
   }
 
   add(expense: ExpenseDto): Observable<any> {

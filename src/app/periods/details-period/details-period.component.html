@@ -1,70 +1,137 @@
-<h2>Periodo {{period.name}}</h2>
+<h2 class="text-primary">Periodo {{period.name}}</h2>
 
 <ul>
-    <li>{{period.dateStart | date}}</li>
-    <li>{{period.dateEnd | date}}</li>
-    <li>{{period.total}}</li>
-    <li>{{period.totalEntries}}</li>
-    <li>{{period.totalExpenses}}</li>
+    <li>Fecha de inicio {{period.dateStart | date}}</li>
+    <li>Fecha de fin {{period.dateEnd | date}}</li>
+    <li>Total {{period.total | currency}}</li>
+    <li>Total de ingresos {{period.totalEntries | currency}}</li>
+    <li>Total de gastos {{period.totalExpenses | currency}}</li>
 </ul>
-<h3>Ingresos</h3>
-<form [formGroup]="formEntry" (ngSubmit)="addEntry()">
-    <input  formControlName="periodId" type="hidden"/>
-    <input formControlName="name"/>
-    <input formControlName="amount"/>
-    <button type="submit">
-        Guardar
-    </button>
-</form>
-<table>
-    <tr>        
-        <th>Nombre</th>
-        <th>Cantidad</th>
-        <th></th>
-    </tr>
-    <tbody>
-        <tr *ngFor="let entry of entries">            
-            <td>{{entry.name}}</td>
-            <td>{{entry.amount | currency}}</td>
-            <td>
-                <button>Editar</button>
-                <button type="button" (click)="deleteEntry(entry)">Borrar</button>
-            </td>
-        </tr>
-    </tbody>
-</table>
 
-<h3>Gastos</h3>
-<form [formGroup]="formExpense" (ngSubmit)="addExpense()">
-    <input  formControlName="periodId" type="hidden"/>
-    <select formControlName="category" (change)="getSubcategories()">        
-        <option *ngFor="let category of categories" value="{{category.id}}">{{category.name}}</option>
-    </select>
-    <select formControlName="subcategoryName" (change)="loadSubcategory()">        
-        <option *ngFor="let subcategory of subcategories" value="{{subcategory.name}}">{{subcategory.name}}</option>
-    </select>
-    <input formControlName="name"/>
-    <input formControlName="amount"/>
-    <button type="submit">
-        Guardar
-    </button>
-</form>
-<table>
-    <tr>
-        <th>Subcategoria</th>
-        <th>Nombre</th>
-        <th>Cantidad</th>
-        <th></th>
-    </tr>
-    <tbody>
-        <tr *ngFor="let expense of expenses">
-            <td>{{expense.subcategoryName}}</td>
-            <td>{{expense.name}}</td>
-            <td>{{expense.amount}}</td>
-            <td>
-                <button>Editar</button>
-                <button type="button" (click)="deleteExpense(expense)">Borrar</button>
-            </td>
-        </tr>
-    </tbody>
-</table>
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title text-primary">Ingresos</h5>
+    </div>
+    <div class="card-body">
+        <form class="row" [formGroup]="formEntry" (ngSubmit)="addEntry()">
+            <input formControlName="id" type="hidden" />
+            <input formControlName="periodId" type="hidden" />
+            <div class="col-3">
+                <label for="" class="label-form">Nombre</label>
+                <input class="form-control" formControlName="name" placeholder="Nombre" />
+            </div>
+            <div class="col-3">
+                <label for="" class="label-form">Cantidad</label>
+                <input class="form-control" formControlName="amount" placeholder="Cantidad" type="number" />
+            </div>
+            <div class="col-3">
+                <label for="" class="label-form"></label>
+                <div class="d-grid">
+                    <button class="btn btn-primary" type="submit">
+                        Guardar
+                    </button>
+                    
+                </div>
+            </div>
+            <div class="col-3">
+                <label for="" class="label-form"></label>
+                <div class="d-grid">
+                    <button class="btn btn-secondary" type="reset">
+                        Cancelar
+                    </button>
+                    
+                </div>
+            </div>
+
+        </form>
+
+        <hr class="text-primary" />
+        <div class="container mt-3">
+            <table class="table">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Cantidad</th>
+                    <th></th>
+                </tr>
+                <tbody>
+                    <tr *ngFor="let entry of entries">
+                        <td>{{entry.name}}</td>
+                        <td>{{entry.amount | currency}}</td>
+                        <td>
+                            <button class="btn btn-warning text-white" (click)="editEntry(entry)">Editar</button>
+                            <button class="btn btn-danger" type="button" (click)="deleteEntry(entry)">Borrar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h5 class="card-title text-primary">Gastos</h5>
+    </div>
+    <div class="card-body">
+
+        <form class="row" [formGroup]="formExpense" (ngSubmit)="addExpense()">
+            <input formControlName="id" type="hidden" />
+            <input formControlName="periodId" type="hidden" />
+            <div class="col-3">
+                <select class="form-select" formControlName="category" (change)="getSubcategories()">
+                    <option value="">Seleccione categoria</option>
+                    <option *ngFor="let category of categories" value="{{category.id}}">{{category.name}}</option>
+                </select>
+            </div>
+
+            <div class="col-3">
+                <select class="form-select" formControlName="subcategoryName" (change)="loadSubcategory()">
+                    <option value="">Seleccione subcategoria</option>
+                    <option *ngFor="let subcategory of subcategories" value="{{subcategory.name}}">{{subcategory.name}}
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-3">
+                <input class="form-control" formControlName="name" placeholder="Nombre" />
+            </div>
+
+            <div class="col-3">
+                <input class="form-control" formControlName="amount" placeholder="Cantidad" type="number" />
+            </div>
+
+            <div class="col-3 d-grid pt-3">
+                <button class="btn btn-primary" type="submit">
+                    Guardar
+                </button>
+            </div>
+
+            <div class="col-3 d-grid pt-3">
+                <button class="btn btn-secondary" type="reset">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+
+        <hr class="text-primary" />
+        <table class="table">
+            <tr>
+                <th>Subcategoria</th>
+                <th>Nombre</th>
+                <th>Cantidad</th>
+                <th></th>
+            </tr>
+            <tbody>
+                <tr *ngFor="let expense of expenses">
+                    <td>{{expense.subcategoryName}}</td>
+                    <td>{{expense.name}}</td>
+                    <td>{{expense.amount | currency}}</td>
+                    <td>
+                        <button class="btn btn-warning text-white" (click)="editExpense(expense)">Editar</button>
+                        <button class="btn btn-danger" type="button" (click)="deleteExpense(expense)">Borrar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

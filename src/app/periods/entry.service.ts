@@ -8,15 +8,19 @@ import { EntryDto } from './entry';
   providedIn: 'root'
 })
 export class EntryService {
+  update(entry: EntryDto): Observable<any> {
+    return this.httpClient.put(this.url + entry.id, entry)
+  }
+
   add(entry: EntryDto): Observable<any> {
-    return this.httpClient.post(this.url ,entry)
+    return this.httpClient.post(this.url, entry)
   }
-  
+
   delete(id: string): Observable<any> {
-    return this.httpClient.delete(this.url + "/" + id)
+    return this.httpClient.delete(this.url + id)
   }
-  
+
   constructor(private httpClient: HttpClient) { }
-  
-  url = environment.baseUrl + '/Api/Entries'
+
+  url = environment.baseUrl + '/Api/Entries/'
 }

@@ -4,8 +4,9 @@
 
 export const environment = {
   production: false,
-  baseUrl : "http://192.168.194.205/Expenses/v2"
+  //baseUrl : "http://192.168.194.205/Expenses/v2"
   //baseUrl : "https://localhost:7255"
+  baseUrl : "http://vikmtz-001-site1.gtempurl.com/expenses"
 };
 
 /*

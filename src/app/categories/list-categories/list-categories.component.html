@@ -1,6 +1,16 @@
 <h2>Lista de categorias</h2>
 
-<a routerLink="/categories/create">Agregar categoria</a>
+<form [formGroup]="formGroup" (ngSubmit)="save()">
+    <input  formControlName="id"/>
+    <input id="name" name="name" formControlName="name"/>
+    <button type="submit">
+        Guardar
+    </button>
+    <button type="reset">
+        Limpiar
+    </button>
+</form>
+
 <table>
     <thead>
         <tr>
@@ -11,11 +21,11 @@
     <tbody>
         <tr *ngFor="let category of listCategories">
             <td>{{category.name}}</td>
-            <td>
+            <!-- <td>
                 <a href="categories/{{category.id}}/subcategories">Ver subcategorias</a>
-            </td>
+            </td> -->
             <td>
-                <a href="categories/edit/{{category.id}}">Editar</a>
+                <button (click)="edit(category)">Editar</button>
             </td>
             <td>
                 <button (click)="delete(category)" type="button">

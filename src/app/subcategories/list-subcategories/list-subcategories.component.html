@@ -1,11 +1,25 @@
 <h2>Subcategorias</h2>
 
+<fieldset>
+    <form [formGroup]="formGroup" (ngSubmit)="saveSubcategory()">
+        <input type="hidden" formControlName="id"/>
+        <select formControlName="categoryName">
+            <option value=null>Seleccione</option>
+            <option *ngFor="let category of categories" value="{{category.name}}">{{category.name}}</option>
+        </select>
+        <input formControlName="name" type="text" />
+        <input formControlName="amount" type="number" />
+        <button type="submit">Guardar</button>
+        <button type="reset">Limpiar</button>
+    </form>
+</fieldset>
+    
 <table>
     <thead>
         <tr>
-            <th>Subcategoria</th>
-            <th>Categoria</th>
-            <th>Cantidad</th>
+            <th (click)="orderBy('name')">Subcategoria</th>
+            <th (click)="orderBy('categoryName')">Categoria</th>
+            <th (click)="orderBy('amount')">Cantidad</th>
             <th></th>
         </tr>
     </thead>
@@ -14,6 +28,15 @@
             <td>{{subcategory.name}}</td>
             <td>{{subcategory.categoryName}}</td>
             <td>{{subcategory.amount | currency}}</td>
+            <td>
+                <button (click)="editSubcategory(subcategory)">Editar</button>
+                <button (click)="deleteSubcategory(subcategory)">Borrar</button>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>{{total | currency}}</td>
             <td></td>
         </tr>
     </tbody>

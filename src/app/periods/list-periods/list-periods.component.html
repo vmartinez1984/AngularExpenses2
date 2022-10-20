@@ -1,6 +1,31 @@
 <h2>Periodos</h2>
 
-<table width="100%" >
+<form [formGroup]="formGroup" (ngSubmit)="save()">
+    <input formControlName="id" type="hidden"/>
+    <div class="mb-3">
+        <label class="form-label">Nombre</label>
+        <input class="form-control" formControlName="name" placeholder="Nombre"/>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Fecha de inicio</label>
+        <input class="form-control" formControlName="dateStart" type="date" />
+    </div>
+
+    <div class="mb-3">
+        <label for="" class="form-label">Fecha de fin</label>
+        <input class="form-control" formControlName="dateEnd" type="date" />
+    </div>
+
+    <button class="btn btn-primary">
+        Guardar
+    </button>
+    <button type="reset" class="btn btn-secondary">
+        Limpiar
+    </button>
+</form>
+
+<table class="table">
     <thead>
         <tr>
             <th>Nombre</th>
@@ -12,12 +37,18 @@
     <tbody>
         <tr *ngFor="let period of listPeriods">
             <td>{{period.name}}</td>
-            <td>{{period.dateStart}}</td>
-            <td>{{period.dateEnd}}</td>
+            <td>{{period.dateStart | date:"dd/MM/yyyy" }}</td>
+            <td>{{period.dateEnd | date:"dd/MM/yyyy" }}</td>
             <td>
                 <a routerLink="/periods/details/{{period.id}}">
                     Detalles
                 </a>
+                <button type="button" (click)="editPeriod(period)" class="btn btn-warning text-white">
+                    Editar
+                </button>
+                <button type="button" (click)="delete(period)" class="btn btn-danger">
+                    Borrar
+                </button>
             </td>
         </tr>
     </tbody>

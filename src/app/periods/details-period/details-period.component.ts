@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CategoriesService } from 'src/app/categories/categories.service';
+import { SubcategoryService } from 'src/app/subcategories/subcategory.service';
 import { CategoryDto } from 'src/app/categories/category';
 import { SubcategoryDto } from 'src/app/subcategories/subcategory';
 import { EntryDto } from '../entry';
@@ -31,6 +32,7 @@ export class DetailsPeriodComponent implements OnInit {
     , private categoryService: CategoriesService
     , private expenseService: ExpensesService
     , private entryService: EntryService
+    , private subcategoryService: SubcategoryService
     , private activatedRoute: ActivatedRoute
     , private formExpenseBuilder: FormBuilder
   ) {
@@ -40,6 +42,7 @@ export class DetailsPeriodComponent implements OnInit {
     this.getEntries()
     this.getCategories()
     this.formExpense = this.formExpenseBuilder.group({
+      id: '',
       periodId: [this.periodId],
       category: ['', { validator: [Validators.required] }],
       subcategoryName: ['', { validator: [Validators.required] }],
@@ -47,13 +50,14 @@ export class DetailsPeriodComponent implements OnInit {
       amount: ['', { validator: [Validators.required] }]
     })
     this.formEntry = this.formExpenseBuilder.group({
+      id: '',
       periodId: [this.periodId],
       name: ['', { validator: [Validators.required] }],
       amount: ['', { validator: [Validators.required] }]
     })
   }
 
-  getEntries(){
+  getEntries() {
     this.periodService.getEntries(this.periodId).subscribe(data => {
       this.entries = data
     }, error => {
@@ -71,20 +75,28 @@ export class DetailsPeriodComponent implements OnInit {
 
   getSubcategories() {
     console.log(this.formExpense.value.category)
-    this.categoryService.getSubcategoriesByCategoryId(this.formExpense.value.category).subscribe(data => {
-      this.subcategories = data
-    }, error => {
-      alert('Valio pepino: ' + error)
-    })
+    this.formExpense.get('subcategoryName')?.setValue("")
+    if (this.formExpense.value.category != "") {
+      this.categoryService.getSubcategoriesByCategoryId(this.formExpense.value.category).subscribe(data => {
+        this.subcategories = data
+      }, error => {
+        alert('Valio pepino: ' + error)
+      })
+    }
   }
 
   loadSubcategory() {
     let subcategory: any
 
     subcategory = this.subcategories.find(x => x.name == this.formExpense.value.subcategoryName)
-    //console.log(subcategory)
-    this.formExpense.get('name')?.setValue(subcategory.name);
-    this.formExpense.get('amount')?.setValue(subcategory.amount);
+    //console.log(subcategory)    
+    if (subcategory == undefined) {
+      this.formExpense.get('name')?.setValue("");
+      this.formExpense.get('amount')?.setValue("");
+    } else {
+      this.formExpense.get('name')?.setValue(subcategory.name);
+      this.formExpense.get('amount')?.setValue(subcategory.amount);
+    }
   }
 
   getPeriod() {
@@ -104,18 +116,26 @@ export class DetailsPeriodComponent implements OnInit {
   }
 
   addExpense() {
-    console.log(this.formExpense.value)
-    this.expenseService.add(this.formExpense.value).subscribe(data => {
-      this.formExpense.reset({ periodId: this.periodId })
-      this.getExpenses()
-    }, error => {
-      alert('Valio pepino: ' + error)
-    })
-  }
-
-  deleteExpense(expense: ExpenseDto) {
-    if (confirm("¿Desea borrar el gasto " + expense.name + "?")){
-      this.expenseService.delete(expense.id).subscribe(data => {        
+    this.formExpense.patchValue({ periodId: this.periodId })
+    //console.log(this.formExpense.value)
+    if (this.formExpense.value.id == null || this.formExpense.value.id == '') {
+      this.expenseService.add(this.formExpense.value).subscribe(data => {
+        alert("Datos registrados")
+        this.formExpense.reset()
+        this.formExpense.get('category')?.setValue("")
+        this.formExpense.get('subcategoryName')?.setValue("")
+        this.formExpense.get('periodId')?.setValue(this.periodId)
+        this.getExpenses()
+      }, error => {
+        alert('Valio pepino: ' + error)
+      })
+    } else {
+      this.expenseService.update(this.formExpense.value).subscribe(data => {
+        alert("Datos registrados")
+        this.formExpense.reset()
+        this.formExpense.get('category')?.setValue("")
+        this.formExpense.get('subcategoryName')?.setValue("")
+        this.formExpense.get('periodId')?.setValue(this.periodId)
         this.getExpenses()
       }, error => {
         alert('Valio pepino: ' + error)
@@ -123,9 +143,19 @@ export class DetailsPeriodComponent implements OnInit {
     }
   }
 
-  deleteEntry(entry:EntryDto){
-    if (confirm("¿Desea borrar el ingreso " + entry.name + "?")){
-      this.entryService.delete(entry.id).subscribe(data => {        
+  deleteExpense(expense: ExpenseDto) {
+    if (confirm("¿Desea borrar el gasto " + expense.name + "?")) {
+      this.expenseService.delete(expense.id).subscribe(data => {
+        this.getExpenses()
+      }, error => {
+        alert('Valio pepino: ' + error)
+      })
+    }
+  }
+
+  deleteEntry(entry: EntryDto) {
+    if (confirm("¿Desea borrar el ingreso " + entry.name + "?")) {
+      this.entryService.delete(entry.id).subscribe(data => {
         this.getEntries()
       }, error => {
         alert('Valio pepino: ' + error)
@@ -133,14 +163,53 @@ export class DetailsPeriodComponent implements OnInit {
     }
   }
 
-  addEntry(){
+  addEntry() {
+    this.formEntry.get('periodId')?.setValue(this.periodId)
     console.log(this.formEntry.value)
-    this.entryService.add(this.formEntry.value).subscribe(data => {
-      this.formEntry.reset({ periodId: this.periodId })
-      this.getEntries()
-    }, error => {
-      alert('Valio pepino: ' + error)
+    if (this.formEntry.value.id == null || this.formEntry.value.id == '') {
+      this.entryService.add(this.formEntry.value).subscribe(data => {
+        this.formEntry.reset({ periodId: this.periodId })
+        this.getEntries()
+      }, error => {
+        alert('Valio pepino: ' + error)
+      })
+    } else {
+      this.entryService.update(this.formEntry.value).subscribe(data => {
+        this.formEntry.reset({ periodId: this.periodId })
+        this.getEntries()
+      }, error => {
+        alert('Valio pepino: ' + error)
+      })
+    }
+  }
+
+  editExpense(expense: ExpenseDto) {
+    //expense.periodId = this.periodId
+    //console.log(expense)
+    this.expenseService.get(expense.id).subscribe(dataExpense => {
+      //console.log(dataExpense);
+      let subcategoryName = dataExpense.subcategoryName
+      //console.log(subcategoryName)
+      this.subcategoryService.getAll().subscribe(data => {
+        //console.log(data)              
+        var subcategory = data.find((x: { name: any; }) => x.name == subcategoryName)
+        //console.log(subcategory)
+        var category = this.categories.find(x => x.name == subcategory.categoryName)
+        dataExpense.category = category?.id;
+        this.categoryService.getSubcategoriesByCategoryId(dataExpense.category).subscribe(data => {
+          this.subcategories = data
+          //console.log(dataEntry)
+          this.formExpense.patchValue(dataExpense)
+          console.log(this.formExpense.value)
+        })
+      })
     })
+  }
+
+  editEntry(entry: EntryDto) {
+    entry.periodId = this.periodId
+    //console.log(entry)
+    this.formEntry.patchValue(entry)
   }
 
   ngOnInit(): void {

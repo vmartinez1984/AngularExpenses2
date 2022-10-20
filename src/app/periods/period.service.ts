@@ -8,6 +8,15 @@ import { PeriodDto } from './period';
   providedIn: 'root'
 })
 export class PeriodService {
+  update(period: PeriodDto): Observable<any> {
+    throw new Error('Method not implemented.');
+  }
+  delete(id: string): Observable<any> {
+    return this.httpClient.delete(this.url+"/"+id)
+  }
+  add(period: PeriodDto): Observable<any> {
+    return this.httpClient.post(this.url, period)
+  }
   getEntries(periodId: string):Observable<any> {
     return this.httpClient.get(this.url + "/" + periodId + "/Entries")
   }
