@@ -1,43 +1,109 @@
 <h2>Subcategorias</h2>
 
-<fieldset>
-    <form [formGroup]="formGroup" (ngSubmit)="saveSubcategory()">
-        <input type="hidden" formControlName="id"/>
-        <select formControlName="categoryName">
-            <option value=null>Seleccione</option>
-            <option *ngFor="let category of categories" value="{{category.name}}">{{category.name}}</option>
-        </select>
-        <input formControlName="name" type="text" />
-        <input formControlName="amount" type="number" />
-        <button type="submit">Guardar</button>
-        <button type="reset">Limpiar</button>
-    </form>
-</fieldset>
-    
-<table>
-    <thead>
-        <tr>
-            <th (click)="orderBy('name')">Subcategoria</th>
-            <th (click)="orderBy('categoryName')">Categoria</th>
-            <th (click)="orderBy('amount')">Cantidad</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let subcategory of subcategories">
-            <td>{{subcategory.name}}</td>
-            <td>{{subcategory.categoryName}}</td>
-            <td>{{subcategory.amount | currency}}</td>
-            <td>
-                <button (click)="editSubcategory(subcategory)">Editar</button>
-                <button (click)="deleteSubcategory(subcategory)">Borrar</button>
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td>{{total | currency}}</td>
-            <td></td>
-        </tr>
-    </tbody>
-</table>
+<div class="card">
+    <div class="card-body">
+
+        <fieldset>
+            <form [formGroup]="formGroup" (ngSubmit)="saveSubcategory()">
+                <input type="hidden" formControlName="id" />
+                <div class="row">
+                    <div class="col-4">
+                        <select class="form-select" formControlName="categoryName">
+                            <option value=null>Seleccione categoria</option>
+                            <option *ngFor="let category of categories" value="{{category.name}}">
+                                {{category.name}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-4">
+                        <input class="form-control" formControlName="name" type="text" placeholder="Nombre" />
+                    </div>
+
+                    <div class="col-4">
+                        <input class="form-control" formControlName="amount" type="number" placeholder="$" />
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-4">
+                        <div class="d-grid">
+                            <button class="btn btn-primary btn-lg" type="submit">Guardar</button>
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <div class="d-grid">
+                            <button class="btn btn-secondary btn-lg" type="reset">Limpiar</button>
+                        </div>
+                    </div>
+
+                    <div class="col-4"></div>
+                </div>
+            </form>
+        </fieldset>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <form [formGroup]="formGroupSearch" (submit)="filter()">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Filtrar" formControlName="search">
+                <button class="btn btn-outline-secondary" type="submit">Filtrar</button>
+                <button class="btn btn-outline-secondary" type="button" (click)="getSubcategories()">Cancelar</button>
+            </div>
+        </form>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th (click)="orderBy('name')" style="cursor: pointer ;">Subcategoria</th>
+                    <th (click)="orderBy('categoryName')" style="cursor: pointer ;">Categoria</th>
+                    <th (click)="orderBy('amount')" style="cursor: pointer ;">Cantidad</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th (click)="orderBy('name')" style="cursor: pointer ;">Subcategoria</th>
+                    <th (click)="orderBy('categoryName')" style="cursor: pointer ;">Categoria</th>
+                    <th (click)="orderBy('amount')" style="cursor: pointer ;">Cantidad</th>
+                    <th></th>
+                </tr>
+            </tfoot>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td>Total</td>
+                    <td>{{total | currency}}</td>
+                    <td></td>
+                </tr>
+                <tr *ngFor="let subcategory of subcategoriesPartial">
+                    <td>{{subcategory.name}}</td>
+                    <td>{{subcategory.categoryName}}</td>
+                    <td>{{subcategory.amount | currency}}</td>
+                    <td>                        
+                        <button class="btn btn-warning text-white"
+                            (click)="editSubcategory(subcategory)">Editar</button>
+                        <button class="btn btn-danger" (click)="deleteSubcategory(subcategory)">Borrar</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Total</td>
+                    <td>{{total | currency}}</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer">
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="button" class="btn btn-primary" (click)="previus()" [disabled]="isPreviusDisabled">Anterior</button>
+            <button type="button" class="btn btn-primary">{{pageCurrent}}</button>
+            <button type="button" class="btn btn-primary" (click)="next()" [disabled]="isNextDisabled">Siguiente</button>
+          </div>
+    </div>
+</div>

@@ -1,12 +1,12 @@
 <h2 class="text-primary">Periodo {{period.name}}</h2>
-
-<ul>
-    <li>Fecha de inicio {{period.dateStart | date}}</li>
-    <li>Fecha de fin {{period.dateEnd | date}}</li>
-    <li>Total {{period.total | currency}}</li>
-    <li>Total de ingresos {{period.totalEntries | currency}}</li>
-    <li>Total de gastos {{period.totalExpenses | currency}}</li>
-</ul>
+<p>
+    {{period.dateStart | date}} / {{period.dateEnd | date}}
+</p>
+<div class="row bg-info bg-gradient text-white p-2 m-1">    
+    <div class="col">Total de ingresos {{period.totalEntries | currency}}</div>
+    <div class="col">Total de gastos {{period.totalExpenses | currency}}</div>
+    <div class="col">Total {{period.totalEntries - period.totalExpenses| currency}}</div>
+</div>
 
 <div class="card">
     <div class="card-header">
@@ -16,11 +16,11 @@
         <form class="row" [formGroup]="formEntry" (ngSubmit)="addEntry()">
             <input formControlName="id" type="hidden" />
             <input formControlName="periodId" type="hidden" />
-            <div class="col-3">
+            <div class="col-md-3">
                 <label for="" class="label-form">Nombre</label>
                 <input class="form-control" formControlName="name" placeholder="Nombre" />
             </div>
-            <div class="col-3">
+            <div class="col-md-3">
                 <label for="" class="label-form">Cantidad</label>
                 <input class="form-control" formControlName="amount" placeholder="Cantidad" type="number" />
             </div>
@@ -28,18 +28,18 @@
                 <label for="" class="label-form"></label>
                 <div class="d-grid">
                     <button class="btn btn-primary" type="submit">
-                        Guardar
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar
                     </button>
-                    
+
                 </div>
             </div>
             <div class="col-3">
                 <label for="" class="label-form"></label>
                 <div class="d-grid">
                     <button class="btn btn-secondary" type="reset">
-                        Cancelar
+                        <i class="fa-solid fa-eraser"></i> Cancelar
                     </button>
-                    
+
                 </div>
             </div>
 
@@ -49,7 +49,7 @@
         <div class="container mt-3">
             <table class="table">
                 <tr>
-                    <th>Nombre</th>
+                    <th (click)="sort('name')" style="cursor:pointer;">Nombre</th>
                     <th>Cantidad</th>
                     <th></th>
                 </tr>
@@ -58,8 +58,19 @@
                         <td>{{entry.name}}</td>
                         <td>{{entry.amount | currency}}</td>
                         <td>
-                            <button class="btn btn-warning text-white" (click)="editEntry(entry)">Editar</button>
-                            <button class="btn btn-danger" type="button" (click)="deleteEntry(entry)">Borrar</button>
+                            <div class="row">
+                                <div class="col text-center">
+                                    <button class="btn btn-warning text-white mx-1" (click)="editEntry(entry)">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                        Editar
+                                    </button>
+                                </div>
+                                <div class="col text-center">
+                                    <button class="btn btn-danger" type="button" (click)="deleteEntry(entry)">
+                                        <i class="fa-solid fa-trash-can"></i> Borrar
+                                    </button>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
@@ -77,14 +88,14 @@
         <form class="row" [formGroup]="formExpense" (ngSubmit)="addExpense()">
             <input formControlName="id" type="hidden" />
             <input formControlName="periodId" type="hidden" />
-            <div class="col-3">
+            <div class="col-md-3">
                 <select class="form-select" formControlName="category" (change)="getSubcategories()">
                     <option value="">Seleccione categoria</option>
                     <option *ngFor="let category of categories" value="{{category.id}}">{{category.name}}</option>
                 </select>
             </div>
 
-            <div class="col-3">
+            <div class="col-md-3">
                 <select class="form-select" formControlName="subcategoryName" (change)="loadSubcategory()">
                     <option value="">Seleccione subcategoria</option>
                     <option *ngFor="let subcategory of subcategories" value="{{subcategory.name}}">{{subcategory.name}}
@@ -92,46 +103,80 @@
                 </select>
             </div>
 
-            <div class="col-3">
+            <div class="col-md-3">
                 <input class="form-control" formControlName="name" placeholder="Nombre" />
             </div>
 
-            <div class="col-3">
+            <div class="col-md-3">
                 <input class="form-control" formControlName="amount" placeholder="Cantidad" type="number" />
             </div>
 
             <div class="col-3 d-grid pt-3">
                 <button class="btn btn-primary" type="submit">
-                    Guardar
+                    <i class="fa-solid fa-floppy-disk"></i> Guardar
                 </button>
             </div>
 
             <div class="col-3 d-grid pt-3">
                 <button class="btn btn-secondary" type="reset">
-                    Cancelar
+                    <i class="fa-solid fa-eraser"></i> Cancelar
                 </button>
             </div>
         </form>
 
         <hr class="text-primary" />
         <table class="table">
-            <tr>
-                <th>Subcategoria</th>
-                <th>Nombre</th>
-                <th>Cantidad</th>
-                <th></th>
-            </tr>
+            <thead class="text-info">
+                <tr>
+                    <th (click)="sortExpenses('subcategoryName')" style="cursor:pointer;">Subcategoria</th>
+                    <th (click)="sortExpenses('name')" style="cursor:pointer;">Nombre</th>
+                    <th (click)="sortExpenses('amount')" style="cursor:pointer;">Cantidad</th>
+                    <th></th>
+                </tr>
+            </thead>
+
             <tbody>
+                <tr>
+                    <td></td>
+                    <td>Total</td>
+                    <td>{{period.totalExpenses | currency}}</td>
+                    <td></td>
+                </tr>
                 <tr *ngFor="let expense of expenses">
                     <td>{{expense.subcategoryName}}</td>
                     <td>{{expense.name}}</td>
                     <td>{{expense.amount | currency}}</td>
                     <td>
-                        <button class="btn btn-warning text-white" (click)="editExpense(expense)">Editar</button>
-                        <button class="btn btn-danger" type="button" (click)="deleteExpense(expense)">Borrar</button>
+                        <div class="row">
+                            <div class="col text-center">
+                                <button class="btn btn-warning text-white" (click)="editExpense(expense)">
+                                    <i class="fa-solid fa-pen-to-square"></i> Editar
+                                </button>
+                            </div>
+                            <div class="col text-center">
+                                <button class="btn btn-danger" type="button" (click)="deleteExpense(expense)">
+                                    <i class="fa-solid fa-trash-can"></i> Borrar
+                                </button>
+                            </div>
+                        </div>
                     </td>
                 </tr>
+                <tr>
+                    <td></td>
+                    <td>Total</td>
+                    <td>{{period.totalExpenses | currency}}</td>
+                    <td></td>
+                </tr>
             </tbody>
+
+            <tfoot class="text-info">
+                <tr>
+                    <th (click)="sortExpenses('subcategoryName')" style="cursor:pointer;">Subcategoria</th>
+                    <th (click)="sortExpenses('name')" style="cursor:pointer;">Nombre</th>
+                    <th (click)="sortExpenses('amount')" style="cursor:pointer;">Cantidad</th>
+                    <th></th>
+                </tr>
+            </tfoot>
         </table>
     </div>
 </div>

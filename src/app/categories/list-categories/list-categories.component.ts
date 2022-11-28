@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CategoriesService } from '../categories.service';
 import { CategoryDto } from '../category';
@@ -12,15 +12,16 @@ import { CategoryDto } from '../category';
 export class ListCategoriesComponent implements OnInit {
   listCategories: CategoryDto[] = [];
   formGroup: FormGroup;
+  isFormDisabled: boolean = false
+  isSaving: boolean = false
 
   constructor(
     private categoriesService: CategoriesService,
-    private router: Router,
-    private formBuilder : FormBuilder
-  ) { 
+    private formBuilder: FormBuilder
+  ) {
     this.formGroup = this.formBuilder.group({
-      id:[''],
-      name:['']
+      id: [''],
+      name: ['', [Validators.required, Validators.maxLength(25), Validators.minLength(3)]]
     })
   }
 
@@ -28,7 +29,7 @@ export class ListCategoriesComponent implements OnInit {
     this.getCategories()
   }
 
-  getCategories(){
+  getCategories() {
     this.categoriesService.get().subscribe(data => {
       this.listCategories = data
       //console.log(this.listCategories)
@@ -47,24 +48,36 @@ export class ListCategoriesComponent implements OnInit {
 
     }
   }
-  
-  save(){
-    if(this.formGroup.value.id == null){
-      this.categoriesService.add(this.formGroup.value).subscribe(data=>{
-        this.getCategories()
-        alert("Datos registrados")
-        this.formGroup.reset()
-      })
-    }else{
-      this.categoriesService.update(this.formGroup.value).subscribe(data=>{
-        this.getCategories()
-        alert("Datos registrados")
-        this.formGroup.reset()
-      })
+
+  save() {
+    console.log(this.formGroup.valid)
+    console.log(this.formGroup.value)
+    console.log(this.formGroup)
+    if (this.formGroup.valid) {
+      this.isFormDisabled = true
+      this.isSaving = true      
+      //this.formGroup.get('name')?.disable()     
+      // if (this.formGroup.value.id == undefined) {               
+      //   this.categoriesService.add(this.formGroup.value).subscribe(data => {
+      //     this.getCategories()
+      //     alert("Datos registrados")
+      //     this.formGroup.reset()
+      //   }, error => {
+      //     console.log(error)
+      //   })
+      // } else {
+      //   this.categoriesService.update(this.formGroup.value).subscribe(data => {
+      //     this.getCategories()
+      //     alert("Datos registrados")
+      //     this.formGroup.reset()
+      //   }, error => {
+      //     console.log(error)
+      //   })
+      // }
     }
   }
 
-  edit(category:CategoryDto){
+  edit(category: CategoryDto) {
     this.formGroup.patchValue(category)
   }
 }

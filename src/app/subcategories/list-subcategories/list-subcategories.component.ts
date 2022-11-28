@@ -12,12 +12,19 @@ import { SubcategoryService } from '../subcategory.service';
 })
 export class ListSubcategoriesComponent implements OnInit {
   subcategories: SubcategoryDto[] = []
+  subcategoriesFiltered: SubcategoryDto[] = []
+  subcategoriesPartial: SubcategoryDto[] = []
   categories: CategoryDto[] = []
   formGroup: FormGroup
   total: number = 0
   orderNameAsc: boolean = true;
   orderCategoryNameAsc: boolean = true;
   orderAmountAsc: boolean = true;
+  formGroupSearch: FormGroup
+
+  pageCurrent: number = 1
+  registerPerPage: number = 10
+  totalRecordsFiltered: number = 0
 
   constructor(
     private subcategoryService: SubcategoryService,
@@ -32,6 +39,9 @@ export class ListSubcategoriesComponent implements OnInit {
       categoryName: [],
       amount: []
     })
+    this.formGroupSearch = this.formBuilder.group({
+      search: ['']
+    })
   }
 
   getCategories() {
@@ -45,15 +55,30 @@ export class ListSubcategoriesComponent implements OnInit {
 
   getSubcategories() {
     this.subcategoryService.getAll().subscribe(data => {
-      this.subcategories = data;
-      this.total = 0
-      this.subcategories.forEach(item => {
-        this.total += item.amount
-      });
+      this.subcategories = data
       //console.log(data);
+      this.sumSubcategories()
+      this.getSubcategoriesPartial()
+
     })
+    this.formGroupSearch?.reset()
   }
 
+  getSubcategoriesPartial() {
+    this.subcategoriesPartial = []
+    let total = (this.pageCurrent * this.registerPerPage) > this.subcategories.length ? this.subcategories.length : (this.pageCurrent * this.registerPerPage)
+    for (let index = ((this.pageCurrent - 1) * this.registerPerPage); index < total; index++) {
+      this.subcategoriesPartial.push(this.subcategories[index])
+    }
+
+  }
+
+  sumSubcategories() {
+    this.total = 0
+    this.subcategories.forEach(item => {
+      this.total += item.amount
+    });
+  }
 
   saveSubcategory() {
     console.log(this.formGroup.value)
@@ -104,6 +129,7 @@ export class ListSubcategoriesComponent implements OnInit {
         break
     }
     this.sortJSON(this.subcategories, prop, asc)
+    this.getSubcategoriesPartial()
   }
 
   sortJSON(data: any, key: string, asc: boolean) {
@@ -119,4 +145,52 @@ export class ListSubcategoriesComponent implements OnInit {
     });
   }
 
+  filter() {
+    console.log(this.formGroupSearch.value)
+    let search = this.formGroupSearch.value.search
+    let subcategoriesFiltered = new Array();
+    for (let i = 0; i < this.subcategories.length; i++) {
+      let subcategory = this.subcategories[i];
+      if (subcategory.name.toLowerCase().includes(search) || subcategory.amount.toString().includes(search) || subcategory.categoryName.toLowerCase().includes(search)) {
+        subcategoriesFiltered.push(subcategory)
+      }
+    }
+    //console.log(subcategoriesFiltered)
+    this.subcategories = subcategoriesFiltered;
+    this.sumSubcategories();
+  }
+
+  isNextDisabled: boolean = false
+  next() {
+    this.pageCurrent = this.pageCurrent + 1
+    this.getSubcategoriesPartial()    
+    this.nextEnabled()
+    this.previusEnabled()
+  }
+
+  nextEnabled(){
+    let total = Math.round(this.subcategories.length / this.registerPerPage)
+    //console.log(total)
+    if (this.pageCurrent == total) {
+      this.isNextDisabled = true
+    } else {
+      this.isNextDisabled = false
+    }  
+  }
+
+  isPreviusDisabled: boolean = true
+  previus() {
+    this.pageCurrent = this.pageCurrent - 1   
+    this.nextEnabled()
+    this.previusEnabled()
+    this.getSubcategoriesPartial()
+  }
+  
+  previusEnabled(){
+    if (this.pageCurrent == 1) {
+      this.isPreviusDisabled = true
+    } else {
+      this.isPreviusDisabled = false
+    }
+  }
 }

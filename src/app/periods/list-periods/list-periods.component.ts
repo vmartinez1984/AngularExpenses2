@@ -1,4 +1,3 @@
-import { formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PeriodDto } from '../period';
@@ -10,8 +9,9 @@ import { PeriodService } from '../period.service';
   styleUrls: ['./list-periods.component.css']
 })
 export class ListPeriodsComponent implements OnInit {
-  listPeriods: PeriodDto[] = [];
-  formGroup: FormGroup;
+  listPeriods: PeriodDto[] = []
+  formGroup: FormGroup
+  isSaving:boolean= false
   constructor(
     private periodService: PeriodService,
     private formBuilder: FormBuilder
@@ -46,18 +46,24 @@ export class ListPeriodsComponent implements OnInit {
   }
 
   save(){
+    this.isSaving = true
+    this.formGroup.disable()
     console.log(this.formGroup.value)
     if(this.formGroup.value.id == null || this.formGroup.value.id == ""){
       this.periodService.add(this.formGroup.value).subscribe(data=>{
         this.getPeriods()
         this.formGroup.reset()
-        alert("Datos registrados")
+        this.formGroup.enable()
+        this.isSaving = false
+        //alert("Datos registrados")
       })
     }else{
       this.periodService.update(this.formGroup.value).subscribe(data=>{
         this.getPeriods()
         this.formGroup.reset()
-        alert("Datos registrados")
+        this.formGroup.enable()
+        this.isSaving = false
+        //alert("Datos registrados")
       })
     }
   }

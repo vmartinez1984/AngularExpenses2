@@ -110,6 +110,11 @@ export class DetailsPeriodComponent implements OnInit {
   getExpenses() {
     this.periodService.getExpenses(this.periodId).subscribe(data => {
       this.expenses = data
+      let total = 0;
+      this.expenses.forEach(item => {
+        total = item.amount + total
+      })
+      this.period.totalExpenses = total
     }, error => {
       alert('Valio pepino: ' + error)
     })
@@ -212,6 +217,51 @@ export class DetailsPeriodComponent implements OnInit {
     this.formEntry.patchValue(entry)
   }
 
+  sortJSON(data: any, key: string, orden: string): any {
+    return data.sort(function (a: any, b: any) {
+      var x = a[key],
+        y = b[key];
+
+      if (orden === 'asc') {
+        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+      } else {
+        return ((x > y) ? -1 : ((x < y) ? 1 : 0));
+      }
+    });
+  }
+
+  sortNameDirection: string = 'desc'
+  sort(key: string) {
+    this.sortJSON(this.expenses, key, this.sortNameDirection)
+    this.sortNameDirection = this.sortNameDirection == 'asc' ? 'desc' : 'asc'
+  }
+
+  sortExpensesNameDirection: string = 'desc'
+  sortExpensesSubcategoryNameDirection: string = 'desc'
+  sortExpensesAmountDirection: string = 'desc'
+  sortExpenses(key: string) {
+    //console.log(key)
+    let direction = 'desc'
+    switch (key) {
+      case 'name':
+        this.sortExpensesNameDirection = this.sortExpensesNameDirection == 'asc' ? 'desc' : 'asc'
+        direction = this.sortExpensesNameDirection
+        break;
+      case 'subcategoryName':
+        this.sortExpensesSubcategoryNameDirection = this.sortExpensesSubcategoryNameDirection == 'asc' ? 'desc' : 'asc'
+        direction = this.sortExpensesSubcategoryNameDirection
+        break;
+      case 'amount':
+        this.sortExpensesAmountDirection = this.sortExpensesAmountDirection == 'asc' ? 'desc' : 'asc'
+        direction = this.sortExpensesAmountDirection
+        break;
+      default:
+        break;
+    }
+    //console.log(this.sortExpensesAmountDirection)  
+    this.expenses = this.sortJSON(this.expenses, key, direction)
+    //console.log(this.expenses)
+  }
   ngOnInit(): void {
   }
 

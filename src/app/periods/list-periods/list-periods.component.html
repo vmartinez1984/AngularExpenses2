@@ -1,31 +1,48 @@
 <h2>Periodos</h2>
 
 <form [formGroup]="formGroup" (ngSubmit)="save()">
-    <input formControlName="id" type="hidden"/>
-    <div class="mb-3">
-        <label class="form-label">Nombre</label>
-        <input class="form-control" formControlName="name" placeholder="Nombre"/>
+    <input formControlName="id" type="hidden" />
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Nombre</label>
+            <input class="form-control" formControlName="name" placeholder="Nombre" />
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Fecha de inicio</label>
+            <input class="form-control" formControlName="dateStart" type="date" />
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label for="" class="form-label">Fecha de fin</label>
+            <input class="form-control" formControlName="dateEnd" type="date" />
+        </div>
     </div>
 
-    <div class="mb-3">
-        <label class="form-label">Fecha de inicio</label>
-        <input class="form-control" formControlName="dateStart" type="date" />
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-primary">
+                <div *ngIf="isSaving">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Guardando
+                </div>
+                <div *ngIf="!isSaving">
+                    <i class="fa-solid fa-floppy-disk"></i> Guardar
+                </div>
+            </button>
+        </div>
+        <div class="col">
+            <button type="reset" class="btn btn-secondary">
+                <i class="fa-solid fa-eraser"></i> Limpiar
+            </button>
+        </div>
+        <div class="col"></div>
     </div>
-
-    <div class="mb-3">
-        <label for="" class="form-label">Fecha de fin</label>
-        <input class="form-control" formControlName="dateEnd" type="date" />
-    </div>
-
-    <button class="btn btn-primary">
-        Guardar
-    </button>
-    <button type="reset" class="btn btn-secondary">
-        Limpiar
-    </button>
 </form>
 
-<table class="table">
+
+
+<table class="table mt-3">
     <thead>
         <tr>
             <th>Nombre</th>
@@ -35,20 +52,35 @@
         </tr>
     </thead>
     <tbody>
+        <tr *ngIf="listPeriods.length == 0">
+            <td colspan="4">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary" role="status">
+                    </div>
+                </div>
+            </td>
+        </tr>
         <tr *ngFor="let period of listPeriods">
             <td>{{period.name}}</td>
-            <td>{{period.dateStart | date:"dd/MM/yyyy" }}</td>
-            <td>{{period.dateEnd | date:"dd/MM/yyyy" }}</td>
+            <td>{{period.dateStart | date:"dd/MM/yyyy" }} / {{period.dateEnd | date:"dd/MM/yyyy" }}</td>
             <td>
-                <a routerLink="/periods/details/{{period.id}}">
-                    Detalles
-                </a>
-                <button type="button" (click)="editPeriod(period)" class="btn btn-warning text-white">
-                    Editar
-                </button>
-                <button type="button" (click)="delete(period)" class="btn btn-danger">
-                    Borrar
-                </button>
+                <div class="row">
+                    <div class="col">
+                        <a class="btn btn-info text-white" routerLink="/periods/details/{{period.id}}">
+                            <i class="fa-solid fa-circle-info"></i> Detalles
+                        </a>
+                    </div>
+                    <div class="col">
+                        <button type="button" (click)="editPeriod(period)" class="btn btn-warning text-white">
+                            <i class="fa-solid fa-pen-to-square"></i> Editar
+                        </button>
+                    </div>
+                    <div class="col">
+                        <button type="button" (click)="delete(period)" class="btn btn-danger">
+                            <i class="fa-solid fa-trash-can"></i> Borrar
+                        </button>
+                    </div>
+                </div>
             </td>
         </tr>
     </tbody>

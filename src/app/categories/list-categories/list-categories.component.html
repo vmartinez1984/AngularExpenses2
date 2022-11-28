@@ -1,37 +1,80 @@
-<h2>Lista de categorias</h2>
+<h2 class="text-info">Lista de categorias</h2>
+<div class="card">
+    <div class="card-header">
 
-<form [formGroup]="formGroup" (ngSubmit)="save()">
-    <input  formControlName="id"/>
-    <input id="name" name="name" formControlName="name"/>
-    <button type="submit">
-        Guardar
-    </button>
-    <button type="reset">
-        Limpiar
-    </button>
-</form>
+        <form [formGroup]="formGroup" (ngSubmit)="save()">
+            <div class="row">
+                <input formControlName="id" type="hidden" />
+                <div class="col-4">
+                    <input class="form-control" type="text" formControlName="name" placeholder="Nombre de la categoria" [disabled]="isFormDisabled"/>
+                </div>
 
-<table>
-    <thead>
-        <tr>
-            <th>Categoria</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let category of listCategories">
-            <td>{{category.name}}</td>
-            <!-- <td>
+                <div class="col-4">
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary" [disabled]="isFormDisabled">
+                            <div *ngIf="isSaving">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Guardando
+                            </div>
+                            <div *ngIf="!isSaving">
+                                <i class="fa-solid fa-floppy-disk"></i> Guardar
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <div class="d-grid">
+                        <button type="reset" class="btn btn-secondary" [disabled]="isFormDisabled">
+                            Limpiar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="card-body">
+
+        <table class="table">
+            <thead class="text-info">
+                <tr>
+                    <th>Categoria</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tfoot class="text-info">
+                <tr>
+                    <th>Categoria</th>
+                    <th></th>
+                </tr>
+            </tfoot>
+            <tbody>
+                <tr *ngFor="let category of listCategories">
+                    <td>{{category.name}}</td>
+                    <!-- <td>
                 <a href="categories/{{category.id}}/subcategories">Ver subcategorias</a>
             </td> -->
-            <td>
-                <button (click)="edit(category)">Editar</button>
-            </td>
-            <td>
-                <button (click)="delete(category)" type="button">
-                    Borrar
-                </button>
-            </td>
-        </tr>
-    </tbody>
-</table>
+                    <td>
+                        <div class="row">
+
+                            <div class="col-6">
+                                <div class="d-grid">
+                                    <button (click)="edit(category)" class="btn btn-warning text-white">Editar</button>
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <div class="d-grid">
+                                    <button (click)="delete(category)" type="button" class="btn btn-danger">
+                                        Borrar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
